@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hybrid-devops-app
+  namespace: dev-ns
+  labels:
+    app: hybrid-devops-app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: hybrid-devops-app
+
+  template:
+    metadata:
+      labels:
+        app: hybrid-devops-app
+
+    spec:
+      containers:
+        - name: hybrid-devops-app
+          image: tanu011/hybrid-devops-app:latest
+          ports:
+            - containerPort: 8080
