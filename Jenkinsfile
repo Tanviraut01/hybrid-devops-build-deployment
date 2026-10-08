@@ -1,3 +1,4 @@
+
 pipeline {
     agent {
         label 'jenkins-agent'
@@ -72,6 +73,12 @@ pipeline {
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
                     kubectl apply -f k8s/ingress.yaml
+
+                    kubectl set image deployment/hybrid-devops-app \
+                      hybrid-devops-app=${DOCKER_IMAGE}:${IMAGE_TAG} \
+                      -n dev-ns
+
+                    kubectl rollout status deployment/hybrid-devops-app -n dev-ns
                 '''
             }
         }
