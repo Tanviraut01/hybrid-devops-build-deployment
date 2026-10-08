@@ -26,13 +26,14 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-          steps {
-              echo 'Running SonarQube code analysis'
-              withSonarQubeEnv('SonarQube') {
-             sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+            steps {
+                echo 'Running SonarQube code analysis'
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                }
             }
-          }
-       }
+        }
+
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image'
@@ -64,25 +65,26 @@ pipeline {
             }
         }
 
-       stage('Deploy to EKS') {
-       steps {
-        echo 'Deploying application to Amazon EKS'
+        stage('Deploy to EKS') {
+            steps {
+                echo 'Deploying application to Amazon EKS'
 
-        sh '''
-            export PATH=/usr/local/bin:/usr/local/aws-cli/v2/current/bin:$PATH
-            
-            kubectl apply -f k8s/deployment.yaml
-            kubectl apply -f k8s/service.yaml
-            kubectl apply -f k8s/ingress.yaml
+                sh '''
+                    export PATH=/usr/local/bin:/usr/local/aws-cli/v2/current/bin:$PATH
 
-            kubectl set image deployment/hybrid-devops-app \
-              hybrid-devops-app=${DOCKER_IMAGE}:${IMAGE_TAG} \
-              -n dev-ns
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    kubectl apply -f k8s/ingress.yaml
 
-            kubectl rollout status deployment/hybrid-devops-app -n dev-ns
-        '''
+                    kubectl set image deployment/hybrid-devops-app \
+                      hybrid-devops-app=${DOCKER_IMAGE}:${IMAGE_TAG} \
+                      -n dev-ns
+
+                    kubectl rollout status deployment/hybrid-devops-app -n dev-ns
+                '''
+            }
+        }
     }
-}
 
     post {
         success {
