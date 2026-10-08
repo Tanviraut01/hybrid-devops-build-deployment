@@ -26,14 +26,13 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                echo 'Running SonarQube code analysis'
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
-                }
+          steps {
+              echo 'Running SonarQube code analysis'
+              withSonarQubeEnv('SonarQube') {
+             sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
             }
-        }
-
+          }
+       }
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image'
